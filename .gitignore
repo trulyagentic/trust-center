@@ -1,0 +1,16 @@
+node_modules/
+dist/
+.astro/
+.env
+.env.*
+*.log
+.DS_Store
+public/downloads/
+.claude/
+
+CLAUDE.md
+
+# Playwright e2e
+/playwright-report/
+/test-results/
+/playwright/.cache/

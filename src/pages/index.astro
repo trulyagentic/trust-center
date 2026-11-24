@@ -1,0 +1,329 @@
+---
+import TrustLayout from '../layouts/TrustLayout.astro';
+import StickyNav from '../components/StickyNav.astro';
+import Hero from '../components/Hero.astro';
+import ControlStatusBar from '../components/ControlStatusBar.astro';
+import FrameworkCard from '../components/FrameworkCard.astro';
+import ControlDomain from '../components/ControlDomain.astro';
+import DataFlowDiagram from '../components/DataFlowDiagram.astro';
+import SubprocessorTable from '../components/SubprocessorTable.astro';
+import DocumentGrid from '../components/DocumentGrid.astro';
+import QuestionnaireCard from '../components/QuestionnaireCard.astro';
+import QuestionnaireComparison from '../components/QuestionnaireComparison.astro';
+import Changelog from '../components/Changelog.astro';
+import ContactCta from '../components/ContactCta.astro';
+import Footer from '../components/Footer.astro';
+
+import config from '../../trust.config';
+
+const site = config;
+const seoTitle = site.seo.title || `${site.company.name} Trust Center`;
+const seoDesc =
+  site.seo.description ||
+  `Learn about ${site.company.name}'s security controls and compliance posture.`;
+
+// Compute control stats
+const allItems = site.controls.flatMap((d) => d.items);
+const implemented = allItems.filter((i) => i.status === 'implemented').length;
+const partial = allItems.filter((i) => i.status === 'partial').length;
+const planned = allItems.filter((i) => i.status === 'planned').length;
+
+// Compute document count
+const docCount = Object.values(site.documents).filter((v) => v != null && v !== '').length;
+
+// Hero stats
+const heroStats = [
+  { value: implemented, label: 'Controls implemented' },
+  { value: site.subprocessors.length, label: 'Vendors assessed' },
+  { value: docCount, label: 'Policies published' },
+];
+
+// Dynamic section numbering
+const visibleSections: string[] = [];
+if (site.frameworks.length > 0) visibleSections.push('compliance');
+if (site.controls.length > 0) visibleSections.push('controls');
+visibleSections.push('architecture');
+if (site.subprocessors.length > 0) visibleSections.push('subprocessors');
+visibleSections.push('documents');
+if (site.questionnaires.filter((q) => q.enabled).length > 0) visibleSections.push('questionnaires');
+if (site.changelog?.length > 0) visibleSections.push('changelog');
+const sn = (key: string) => String(visibleSections.indexOf(key) + 1).padStart(2, '0');
+
+// Download URL
+const downloadSlug = site.company.name.toLowerCase().replace(/\s+/g, '-');
+const downloadUrl = `/downloads/${downloadSlug}-compliance-report.pdf`;
+---
+
+<TrustLayout
+  title={seoTitle}
+  description={seoDesc}
+  ogImage={site.seo.ogImage}
+  favicon={site.company.favicon}
+  themeMode={site.theme.mode}
+  headingFont={site.theme.fonts.heading}
+  bodyFont={site.theme.fonts.body}
+  primaryColor={site.theme.colors.primary}
+  lastReviewed={site.lastReviewed}
+>
+  <StickyNav companyName={site.company.name} logo={site.company.logo} />
+
+  <main>
+    <Hero
+      companyName={site.company.name}
+      tagline="BYOC agentic AI security controls, OWASP Agentic AI (ASI01–ASI06) defenses, and transparent pre-SOC 2 readiness."
+      stats={heroStats}
+      downloadUrl={downloadUrl}
+    />
+
+    {/* Status summary */}
+    {
+      allItems.length > 0 && (
+        <ControlStatusBar implemented={implemented} partial={partial} planned={planned} />
+      )
+    }
+
+    {/* 01 — Compliance */}
+    {
+      site.frameworks.length > 0 && (
+        <section
+          id="compliance"
+          class="reveal border-b border-gray-200 py-16 sm:py-24 dark:border-gray-800"
+        >
+          <div class="mx-auto max-w-5xl px-6">
+            <p
+              class="mb-4 text-xs tracking-widest text-gray-400 uppercase dark:text-gray-500"
+              style="font-family: var(--font-heading)"
+            >
+              {sn('compliance')} — Compliance
+            </p>
+            <h2
+              class="text-2xl font-semibold text-gray-900 sm:text-3xl dark:text-gray-100"
+              style="font-family: var(--font-heading)"
+            >
+              Frameworks
+            </h2>
+            <div class="mt-6 grid gap-4 sm:grid-cols-2">
+              {site.frameworks.map((fw) => (
+                <FrameworkCard
+                  name={fw.name}
+                  status={fw.status}
+                  description={fw.description}
+                  certifiedDate={fw.certifiedDate}
+                  auditBody={fw.auditBody}
+                  reportAvailable={fw.reportAvailable}
+                  securityEmail={site.company.securityEmail}
+                  lastVerified={fw.lastVerified}
+                />
+              ))}
+            </div>
+          </div>
+        </section>
+      )
+    }
+
+    {/* 02 — Security Controls */}
+    {
+      site.controls.length > 0 && (
+        <section
+          id="controls"
+          class="reveal border-b border-gray-200 py-16 sm:py-24 dark:border-gray-800"
+        >
+          <div class="mx-auto max-w-5xl px-6">
+            <p
+              class="mb-4 text-xs tracking-widest text-gray-400 uppercase dark:text-gray-500"
+              style="font-family: var(--font-heading)"
+            >
+              {sn('controls')} — Security Controls
+            </p>
+            <h2
+              class="text-2xl font-semibold text-gray-900 sm:text-3xl dark:text-gray-100"
+              style="font-family: var(--font-heading)"
+            >
+              Controls
+            </h2>
+            <div class="mt-4 divide-y divide-gray-200 dark:divide-gray-800">
+              {site.controls.map((domain) => (
+                <ControlDomain domain={domain.domain} items={domain.items} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )
+    }
+
+    {/* 03 — Architecture */}
+    <section
+      id="architecture"
+      class="reveal border-b border-gray-200 py-16 sm:py-24 dark:border-gray-800"
+    >
+      <div class="mx-auto max-w-5xl px-6">
+        <p
+          class="mb-4 text-xs tracking-widest text-gray-400 uppercase dark:text-gray-500"
+          style="font-family: var(--font-heading)"
+        >
+          {sn('architecture')} — Architecture
+        </p>
+        <h2
+          class="text-2xl font-semibold text-gray-900 sm:text-3xl dark:text-gray-100"
+          style="font-family: var(--font-heading)"
+        >
+          Data Flow
+        </h2>
+        <p class="mt-2 max-w-2xl text-sm leading-relaxed text-gray-500 dark:text-gray-400">
+          How data stays inside your Bring-Your-Own-Cloud (BYOC) VPC across deterministic governance
+          gates, private inference endpoints, and fail-closed audit logging.
+        </p>
+        <div class="mt-8">
+          <DataFlowDiagram />
+        </div>
+      </div>
+    </section>
+
+    {/* 04 — Subprocessors */}
+    {
+      site.subprocessors.length > 0 && (
+        <section
+          id="subprocessors"
+          class="reveal border-b border-gray-200 py-16 sm:py-24 dark:border-gray-800"
+        >
+          <div class="mx-auto max-w-5xl px-6">
+            <p
+              class="mb-4 text-xs tracking-widest text-gray-400 uppercase dark:text-gray-500"
+              style="font-family: var(--font-heading)"
+            >
+              {sn('subprocessors')} — Subprocessors
+            </p>
+            <h2
+              class="mb-8 text-2xl font-semibold text-gray-900 sm:text-3xl dark:text-gray-100"
+              style="font-family: var(--font-heading)"
+            >
+              Vendors
+            </h2>
+            <SubprocessorTable
+              subprocessors={site.subprocessors}
+              privacyEmail={site.company.privacyEmail}
+              lastUpdated={site.subprocessorsLastUpdated}
+            />
+          </div>
+        </section>
+      )
+    }
+
+    {/* 05 — Documents */}
+    <section
+      id="documents"
+      class="reveal border-b border-gray-200 py-16 sm:py-24 dark:border-gray-800"
+    >
+      <div class="mx-auto max-w-5xl px-6">
+        <p
+          class="mb-4 text-xs tracking-widest text-gray-400 uppercase dark:text-gray-500"
+          style="font-family: var(--font-heading)"
+        >
+          {sn('documents')} — Documents
+        </p>
+        <h2
+          class="mb-8 text-2xl font-semibold text-gray-900 sm:text-3xl dark:text-gray-100"
+          style="font-family: var(--font-heading)"
+        >
+          Policies
+        </h2>
+        <DocumentGrid documents={site.documents} />
+      </div>
+    </section>
+
+    {/* 06 — Questionnaires */}
+    {
+      site.questionnaires.filter((q) => q.enabled).length > 0 && (
+        <section
+          id="questionnaires"
+          class="reveal border-b border-gray-200 py-16 sm:py-24 dark:border-gray-800"
+        >
+          <div class="mx-auto max-w-5xl px-6">
+            <p
+              class="mb-4 text-xs tracking-widest text-gray-400 uppercase dark:text-gray-500"
+              style="font-family: var(--font-heading)"
+            >
+              {sn('questionnaires')} — Questionnaires
+            </p>
+            <h2
+              class="text-2xl font-semibold text-gray-900 sm:text-3xl dark:text-gray-100"
+              style="font-family: var(--font-heading)"
+            >
+              Pre-filled Assessments
+            </h2>
+            <p class="mt-2 max-w-2xl text-sm leading-relaxed text-gray-500 dark:text-gray-400">
+              Browse our completed security questionnaires. Each assessment is pre-filled with our
+              current security posture.
+            </p>
+            <div class="mt-6">
+              <QuestionnaireComparison />
+            </div>
+            <div class="mt-6 grid gap-4 sm:grid-cols-2">
+              {site.questionnaires
+                .filter((q) => q.enabled)
+                .map((q) => (
+                  <QuestionnaireCard
+                    name={q.name}
+                    slug={q.slug}
+                    description={q.description}
+                    questionCount={q.questionCount}
+                    sectionCount={q.sectionCount}
+                    version={q.version}
+                  />
+                ))}
+            </div>
+          </div>
+        </section>
+      )
+    }
+
+    {/* 07 — Changelog */}
+    {
+      site.changelog && site.changelog.length > 0 && (
+        <section
+          id="changelog"
+          class="reveal border-b border-gray-200 py-16 sm:py-24 dark:border-gray-800"
+        >
+          <div class="mx-auto max-w-5xl px-6">
+            <p
+              class="mb-4 text-xs tracking-widest text-gray-400 uppercase dark:text-gray-500"
+              style="font-family: var(--font-heading)"
+            >
+              {sn('changelog')} — Changelog
+            </p>
+            <h2
+              class="text-2xl font-semibold text-gray-900 sm:text-3xl dark:text-gray-100"
+              style="font-family: var(--font-heading)"
+            >
+              Recent Updates
+            </h2>
+            <div class="mt-6">
+              <Changelog entries={site.changelog} />
+            </div>
+          </div>
+        </section>
+      )
+    }
+
+    {/* 08 — Contact */}
+    <section id="contact" class="reveal">
+      <div class="mx-auto max-w-5xl px-6">
+        <ContactCta
+          heading={site.contact.heading}
+          description={site.contact.description}
+          ctaLabel={site.contact.cta.label}
+          ctaHref={site.contact.cta.href}
+          questionnaireUrl={site.contact.questionnaireUrl}
+          prefilledQuestionnaireUrl={site.contact.prefilledQuestionnaireUrl}
+          prefilledQuestionnaireLabel={site.contact.prefilledQuestionnaireLabel}
+        />
+      </div>
+    </section>
+  </main>
+
+  <Footer
+    companyName={site.company.name}
+    website={site.company.website}
+    lastReviewed={site.lastReviewed}
+  />
+</TrustLayout>

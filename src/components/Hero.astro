@@ -1,0 +1,105 @@
+---
+interface Stat {
+  value: number;
+  label: string;
+}
+
+interface Props {
+  companyName: string;
+  tagline?: string;
+  stats?: Stat[];
+  downloadUrl?: string;
+}
+
+const {
+  companyName,
+  tagline,
+  stats = [],
+  downloadUrl = '/downloads/compliance-report.pdf',
+} = Astro.props;
+
+const displayTagline = tagline || `Security and compliance at ${companyName}`;
+---
+
+<section class="border-b border-gray-200 py-24 sm:py-32 lg:py-40 dark:border-gray-800">
+  <div class="mx-auto max-w-5xl px-6">
+    <h1
+      class="leading-none font-semibold tracking-tight text-gray-900 dark:text-gray-100"
+      style="font-family: var(--font-heading); font-size: clamp(2.5rem, 8vw, 6.5rem)"
+    >
+      Trust Center
+    </h1>
+    <p class="mt-6 max-w-xl text-lg leading-relaxed text-gray-500 dark:text-gray-400">
+      {displayTagline}
+    </p>
+    {
+      stats.length > 0 && (
+        <div class="mt-10 flex flex-wrap gap-x-12 gap-y-6">
+          {stats.map((stat) => (
+            <div>
+              <span
+                class="counter text-3xl font-semibold text-gray-900 tabular-nums dark:text-gray-100"
+                style="font-family: var(--font-heading)"
+                data-target={stat.value}
+              >
+                &mdash;
+              </span>
+              <p class="mt-1 text-sm text-gray-400 dark:text-gray-500">{stat.label}</p>
+            </div>
+          ))}
+        </div>
+      )
+    }
+    <div class="mt-8">
+      <a
+        href={downloadUrl}
+        download
+        class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 shadow-sm transition-colors hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+          ><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline
+            points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg
+        >
+        Download Compliance Report
+      </a>
+    </div>
+  </div>
+</section>
+
+<script is:inline>
+  (function () {
+    const observer = new IntersectionObserver(
+      function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          const el = entry.target;
+          const target = parseInt(el.getAttribute('data-target'), 10);
+          const duration = 800;
+          const start = performance.now();
+          function step(now) {
+            const progress = Math.min((now - start) / duration, 1);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            el.textContent = String(Math.round(eased * target));
+            if (progress < 1) requestAnimationFrame(step);
+          }
+          requestAnimationFrame(step);
+          observer.unobserve(el);
+        });
+      },
+      { threshold: 0.5 },
+    );
+    document.querySelectorAll('.counter').forEach(function (el) {
+      observer.observe(el);
+    });
+  })();
+</script>

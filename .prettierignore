@@ -1,0 +1,9 @@
+dist/
+.astro/
+node_modules/
+package-lock.json
+public/downloads/
+e2e/
+playwright.config.ts
+playwright-report/
+test-results/

@@ -1,0 +1,151 @@
+---
+// Visual BYOC data flow diagram for Truly Agentic.
+// Satisfies CSA CAIQ-Lite AIS-01/AIS-02/CEK-01 and MVSP BYOC segregation transparency.
+---
+
+<div class="space-y-3 text-xs" style="font-family: var(--font-heading)">
+  {/* Customer Inputs & Triggers */}
+  <div>
+    <p class="mb-2 text-[10px] tracking-widest text-gray-400 uppercase dark:text-gray-500">
+      Customer Inputs &amp; Governance Triggers
+    </p>
+    <div class="grid gap-2 sm:grid-cols-3">
+      <div
+        class="rounded-md border border-gray-200 bg-white px-3 py-2.5 text-center dark:border-gray-700 dark:bg-gray-900"
+      >
+        <p class="font-medium text-gray-700 dark:text-gray-300">Systems of Record</p>
+        <p class="mt-0.5 text-[10px] text-gray-400 dark:text-gray-500">
+          NetSuite · SAP · CRM · Sandbox
+        </p>
+      </div>
+      <div
+        class="rounded-md border border-gray-200 bg-white px-3 py-2.5 text-center dark:border-gray-700 dark:bg-gray-900"
+      >
+        <p class="font-medium text-gray-700 dark:text-gray-300">Named Individual Approver</p>
+        <p class="mt-0.5 text-[10px] text-gray-400 dark:text-gray-500">
+          Slack / Teams Block Kit · HMAC
+        </p>
+      </div>
+      <div
+        class="rounded-md border border-gray-200 bg-white px-3 py-2.5 text-center dark:border-gray-700 dark:bg-gray-900"
+      >
+        <p class="font-medium text-gray-700 dark:text-gray-300">Customer Git &amp; CI/CD</p>
+        <p class="mt-0.5 text-[10px] text-gray-400 dark:text-gray-500">
+          Signed PRs · Terraform · Policy JSON
+        </p>
+      </div>
+    </div>
+  </div>
+
+  {/* Arrow */}
+  <div class="flex justify-center text-gray-300 dark:text-gray-600">
+    <div class="flex flex-col items-center">
+      <div class="h-3 w-px bg-current"></div>
+      <span>&#9660;</span>
+    </div>
+  </div>
+
+  {/* Customer BYOC Cloud Boundary */}
+  <div
+    class="rounded-lg border-2 border-dashed border-sky-300 bg-sky-50/50 p-3 dark:border-sky-800 dark:bg-sky-950/20"
+  >
+    <p class="mb-3 text-[10px] tracking-widest text-sky-500 uppercase dark:text-sky-400">
+      Customer Cloud Account / Private VPC (AWS · GCP · Azure) — Zero SaaS Data Egress
+    </p>
+
+    {/* Identity + Gateway + Private Inference */}
+    <div class="grid gap-2 sm:grid-cols-3">
+      <div
+        class="rounded-md border border-gray-200 bg-white px-3 py-2.5 text-center dark:border-gray-700 dark:bg-gray-900"
+      >
+        <p class="font-medium text-gray-700 dark:text-gray-300">Customer KMS &amp; IdP</p>
+        <p class="mt-0.5 text-[10px] text-gray-400 dark:text-gray-500">
+          OIDC Workload ID · Secrets Vault
+        </p>
+      </div>
+      <div
+        class="rounded-md border border-emerald-300 bg-emerald-50 px-3 py-2.5 text-center dark:border-emerald-800 dark:bg-emerald-950/30"
+      >
+        <p class="font-medium text-emerald-700 dark:text-emerald-300">Governance Gateway</p>
+        <p class="mt-0.5 text-[10px] text-emerald-600 dark:text-emerald-400">
+          5 Deterministic Controls · L1–L5
+        </p>
+        <p class="text-[10px] text-emerald-600 dark:text-emerald-400">
+          OWASP ASI01 &amp; ASI04 MCP Scanner
+        </p>
+      </div>
+      <div
+        class="rounded-md border border-gray-200 bg-white px-3 py-2.5 text-center dark:border-gray-700 dark:bg-gray-900"
+      >
+        <p class="font-medium text-gray-700 dark:text-gray-300">Private Zero-Retention LLM</p>
+        <p class="mt-0.5 text-[10px] text-gray-400 dark:text-gray-500">
+          Bedrock · Vertex AI · Azure OpenAI
+        </p>
+      </div>
+    </div>
+
+    {/* Arrow to immutable audit storage */}
+    <div class="flex justify-center py-2 text-gray-300 dark:text-gray-600">
+      <div class="flex flex-col items-center">
+        <div class="h-2 w-px bg-current"></div>
+        <span class="text-[10px]">
+          1. pre_execution SHA-256 commit &middot; if offline &rarr; hard abort &#9660;
+        </span>
+      </div>
+    </div>
+
+    {/* Immutable Storage layer inside Customer VPC */}
+    <div class="grid gap-2 sm:grid-cols-2">
+      <div
+        class="rounded-md border border-gray-200 bg-white px-3 py-2.5 dark:border-gray-700 dark:bg-gray-900"
+      >
+        <p class="font-medium text-gray-700 dark:text-gray-300">Append-Only PostgreSQL Ledger</p>
+        <p class="mt-0.5 text-[10px] text-gray-400 dark:text-gray-500">
+          SHA-256 hash chain · UPDATE/DELETE blocked by trigger
+        </p>
+      </div>
+      <div
+        class="rounded-md border border-gray-200 bg-white px-3 py-2.5 dark:border-gray-700 dark:bg-gray-900"
+      >
+        <p class="font-medium text-gray-700 dark:text-gray-300">Immutable WORM Object Store</p>
+        <p class="mt-0.5 text-[10px] text-gray-400 dark:text-gray-500">
+          S3 Object Lock · GCS Retention Lock · Customer SIEM
+        </p>
+      </div>
+    </div>
+  </div>
+
+  {/* Non-operational boundary note */}
+  <div
+    class="rounded-md border border-gray-200 bg-white/70 px-3 py-2.5 text-[11px] text-gray-500 dark:border-gray-800 dark:bg-gray-900/50 dark:text-gray-400"
+  >
+    <strong class="text-gray-700 dark:text-gray-200">Zero Multi-Tenant Custody:</strong> Truly Agentic
+    operates no central SaaS control plane holding client invoices, ERP data, or OAuth tokens. Any temporary
+    onboarding access is time-boxed and expires at engagement handover.
+  </div>
+
+  {/* Legend */}
+  <div
+    class="mt-4 flex flex-wrap gap-x-5 gap-y-1.5 border-t border-gray-100 pt-3 text-[10px] text-gray-400 dark:border-gray-800 dark:text-gray-500"
+  >
+    <span class="flex items-center gap-1.5">
+      <span
+        class="inline-block h-2 w-3 rounded-sm border-2 border-dashed border-sky-300 dark:border-sky-700"
+      ></span>
+      Customer BYOC security boundary
+    </span>
+    <span class="flex items-center gap-1.5">
+      <span
+        class="inline-block h-2 w-3 rounded-sm border border-emerald-300 bg-emerald-50 dark:border-emerald-800 dark:bg-emerald-950/30"
+      ></span>
+      Fail-closed deterministic choke-point
+    </span>
+    <span class="flex items-center gap-1.5">
+      <span
+        class="inline-block h-2 w-3 rounded-sm border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-900"
+      ></span>
+      Customer-owned component
+    </span>
+    <span>All public web edges enforce TLS 1.2+</span>
+  </div>
+</div>

@@ -1,0 +1,56 @@
+---
+import ControlItem from './ControlItem.astro';
+
+interface ControlItemData {
+  title: string;
+  description: string;
+  status: 'implemented' | 'partial' | 'planned';
+  lastVerified?: string | undefined;
+}
+
+interface Props {
+  domain: string;
+  items: ControlItemData[];
+}
+
+const { domain, items } = Astro.props;
+
+const implementedCount = items.filter((i) => i.status === 'implemented').length;
+---
+
+<details class="group py-8">
+  <summary
+    class="mb-2 flex cursor-pointer list-none items-baseline gap-3 [&::-webkit-details-marker]:hidden"
+  >
+    <h3
+      class="text-lg font-medium text-gray-900 dark:text-gray-100"
+      style="font-family: var(--font-heading)"
+    >
+      {domain}
+    </h3>
+    <span
+      class="text-xs text-gray-400 tabular-nums dark:text-gray-500"
+      style="font-family: var(--font-heading)"
+    >
+      {implementedCount}/{items.length}
+    </span>
+    <span
+      class="ml-auto text-xs text-gray-300 transition-transform duration-200 group-open:rotate-90 dark:text-gray-600"
+      aria-hidden="true"
+    >
+      &#9654;
+    </span>
+  </summary>
+  <div class="divide-y divide-gray-100 dark:divide-gray-800/60">
+    {
+      items.map((item) => (
+        <ControlItem
+          title={item.title}
+          description={item.description}
+          status={item.status}
+          lastVerified={item.lastVerified}
+        />
+      ))
+    }
+  </div>
+</details>
