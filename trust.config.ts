@@ -28,7 +28,7 @@ export default defineConfig({
       name: 'OWASP Top 10 for Agentic AI (2026)',
       status: 'in-progress',
       description:
-        'Runtime controls mapped directly to ASI01–ASI06 (Goal Hijack, Tool Misuse, Privilege Abuse, MCP Poisoning/Rug Pulls, Unexpected Execution, Context Poisoning) in our open-source Governance Kit v0.1.0 (synthetic lab benchmarked).',
+        'Runtime controls mapped to ASI01–ASI06 in Governance Kit v0.1.0 paired with 15 zero-LLM deterministic static CI/SARIF rules covering ASI01–ASI10 in owasp-agentic-policy-pack v0.1.0 (synthetic lab benchmarked).',
       certifiedDate: null,
       auditBody: null,
       reportAvailable: false,
@@ -255,6 +255,20 @@ export default defineConfig({
           lastVerified: 'November 2026',
         },
         {
+          title: 'Deterministic OWASP ASI01–ASI10 Static CI & SARIF Gate',
+          description:
+            'Open-source owasp-agentic-policy-pack v0.1.0 runs 15 zero-LLM static rules with SARIF 2.1.0 export, Portkey zero-retention and Invariant guardrail baselines, and UAE PDPL / DESC ISR v3 mappings (7/7 Vitest specs passing).',
+          status: 'implemented',
+          lastVerified: 'November 2026',
+        },
+        {
+          title: 'GitHub Org Secret Scanning, Push Protection & Dependabot Auto-Fixes',
+          description:
+            'All five trulyagentic GitHub repositories have Dependabot automated security updates enabled with zero open alerts; all four public repositories enforce secret scanning, push protection, and main branch protection against force-push or deletion.',
+          status: 'implemented',
+          lastVerified: 'November 2026',
+        },
+        {
           title: 'Independent Third-Party Penetration Testing',
           description:
             'Continuous synthetic regression testing runs in CI, while full source and Terraform IaC are open for prospect CloudSec review under NDA. Formal independent external penetration testing is scheduled alongside enterprise contracts.',
@@ -344,7 +358,7 @@ export default defineConfig({
         {
           title: 'Formal Third-Party GRC Audit Readiness',
           description:
-            'Tracking pre-audit readiness controls continuously ahead of formal third-party SOC 2 Type I / II examination.',
+            'Continuous pre-audit SOC 2 readiness tracked in TrustCloud (18/18 approved baseline policies, Docs-as-Code procedure links, and read-only Cloudflare + GitHub integrations). Not currently SOC 2 certified.',
           status: 'partial',
           lastVerified: 'November 2026',
         },
@@ -394,6 +408,13 @@ export default defineConfig({
       dpaUrl:
         'https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement',
     },
+    {
+      name: 'TrustCloud',
+      purpose:
+        'Continuous pre-audit SOC 2 readiness monitoring via read-only Cloudflare and GitHub metadata integrations only',
+      location: 'United States',
+      dpaUrl: 'https://www.trustcloud.ai/legal/privacy/',
+    },
   ],
 
   documents: {
@@ -434,6 +455,12 @@ export default defineConfig({
   questionnaires: questionnaireMeta,
 
   changelog: [
+    {
+      date: '2026-11-25',
+      title: 'Cloudflare 2FA Enforcement, GitHub Security Hardening & OWASP Policy Pack v0.1.0',
+      description:
+        'Published owasp-agentic-policy-pack v0.1.0 (15 ASI01–ASI10 static CI rules + SARIF 2.1.0), cleared all Dependabot alerts to 0, enabled secret scanning/push protection/branch protection on public repos, and enforced Cloudflare account-wide 2FA.',
+    },
     {
       date: '2026-11-24',
       title: 'Public Trust Center launched at trust.trulyagentic.io',
