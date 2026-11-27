@@ -146,6 +146,13 @@ export default defineConfig({
           status: 'implemented',
           lastVerified: 'November 2026',
         },
+        {
+          title: 'Staged Shadow-Mode Promotion Gate (shadow-mode-gate v0.1.0)',
+          description:
+            'Open-source shadow-mode-gate v0.1.0 enforces Weeks 1–2 Read-Only Observe and Weeks 3–4 Shadow Dry-Run (zero downstream mutations) with empirical accuracy gating (>=98% action match) before Level 3 Slack/Teams HMAC named-approver execution (4/4 Vitest specs passing on synthetic AP fixtures).',
+          status: 'implemented',
+          lastVerified: 'November 2026',
+        },
       ],
     },
     {
@@ -264,7 +271,7 @@ export default defineConfig({
         {
           title: 'GitHub Org Secret Scanning, Push Protection & Dependabot Auto-Fixes',
           description:
-            'All five trulyagentic GitHub repositories have Dependabot automated security updates enabled with zero open alerts; all four public repositories enforce secret scanning, push protection, and main branch protection against force-push or deletion.',
+            'All six trulyagentic GitHub repositories have Dependabot automated security updates enabled with zero open alerts; all five public repositories enforce secret scanning, push protection, and main branch protection against force-push or deletion.',
           status: 'implemented',
           lastVerified: 'November 2026',
         },
